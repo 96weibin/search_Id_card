@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header{
+            display: -webkit-flex;
+            justify-content: center;
+        }
+        #idCard{
+            width: 240px;
+            height: 30px;
+            outline: none;
+        }
+        .box{
+            width: 200px;
+            height: 200px;
+            background: pink;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="http://www.mps.gov.cn/template/3502845/3502855.jpg" alt="国家机密">
+    </header>
+    <h2>公安系统-身份证查询</h2>
+    <input id ='idCard' type="text" placeholder="请输入要查询的身份证号码">
+    <script src="myajax.js"></script>
+    <script>
+        var oInput = document.querySelector('#idCard');
+        oInput.onkeydown = function(e){
+            e = e || window.event;
+            if(e.keyCode == 13){
+                var data = oInput.value;
+                myajax.get('http://route.showapi.com/25-3', {'showapi_appid':'45886','showapi_sign':'8ed66154363d4c8da6f3ff776c3bf5c2','id':data},function(error, response) {
+                    var json = JSON.parse(response);
+                    var oBox = document.createElement('div');
+                    // if(oBox){
+                    //     // console.log('true');
+                    //     // oBox.innerHTML = ' ';
+                    //     console.log(oBox)
+                    //     console.log(oBox.parentNode);
+                    //     console.log(oBox.parentElement);
+                    //     // oBox.parentElement.removeChild(oBox);
+                    //     oBox.parentNode.removeChild(oBox);
+                    // }
+                    oBox.calssName='box';
+                    console.log(oBox);           
+                    if(json.showapi_res_body.retMsg == 'success') {
+                        console.log(json.showapi_res_body);
+                        var area = json.showapi_res_body.retData.address;
+                        var birthday = json.showapi_res_body.retData.birthday;
+                        var sex = json.showapi_res_body.retData.sex;
+
+
+                        oBox.innerHTML=`
+                                        <h6>地区:${area}</h6>
+                                        <h6>生日：${birthday}</h6>
+                                        <h6>性别:${sex}</h6>
+                                        `
+                    }else{
+                        console.log(json.showapi_res_body);
+                        
+                        oBox.innerHTML = json.showapi_res_body.remark;
+                    }
+
+                        document.body.appendChild(oBox);
+                        // console.log(area, birthday, sex, retMsg)
+                })
+            }
+        }
+        
+    </script>
+</body>
+</html>
